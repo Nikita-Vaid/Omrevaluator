@@ -8,6 +8,12 @@ function App() {
     const [examType, setExamType] = useState("JEE");
     const [results, setResults] = useState(null);
 
+    // Handles manual answer key input
+    const handleManualAnswerChange = (question, value) => {
+        setManualAnswers((prev) => ({ ...prev, [question]: value }));
+    };
+
+    // Upload OMR Sheet
     const handleOMRUpload = async () => {
         const formData = new FormData();
         formData.append("omrSheet", omrFile);
@@ -22,6 +28,7 @@ function App() {
         }
     };
 
+    // Upload Answer Key (CSV or Manual)
     const handleAnswerUpload = async () => {
         const formData = new FormData();
         if (answerFile) {
@@ -44,20 +51,37 @@ function App() {
         <div>
             <h1>OMR Evaluation System</h1>
 
+            {/* Select Exam Type */}
             <label>Choose Exam Type:</label>
             <select value={examType} onChange={(e) => setExamType(e.target.value)}>
                 <option value="JEE">JEE Mains</option>
                 <option value="NEET">NEET</option>
             </select>
 
+            {/* Upload OMR Sheet */}
             <h2>Upload OMR Sheet</h2>
             <input type="file" onChange={(e) => setOmrFile(e.target.files[0])} />
             <button onClick={handleOMRUpload}>Upload & Evaluate</button>
 
+            {/* Upload Answer Key */}
             <h2>Upload Answer Key</h2>
             <input type="file" onChange={(e) => setAnswerFile(e.target.files[0])} />
             <button onClick={handleAnswerUpload}>Upload Answer Key</button>
 
+            {/* Manual Answer Entry */}
+            <h3>Or Enter Answers Manually</h3>
+            {[...Array(10).keys()].map((q) => (
+                <div key={q}>
+                    <label>Q{q + 1}: </label>
+                    <input
+                        type="text"
+                        onChange={(e) => handleManualAnswerChange(q + 1, e.target.value)}
+                    />
+                </div>
+            ))}
+            <button onClick={handleAnswerUpload}>Submit Manual Answers</button>
+
+            {/* Display Results */}
             {results && (
                 <div>
                     <h2>Results</h2>
@@ -71,4 +95,6 @@ function App() {
 }
 
 export default App;
+
+
 
